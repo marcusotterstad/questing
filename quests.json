@@ -1,0 +1,33 @@
+{
+    "quests": [
+      {
+        "name": "Introduction to Algebra",
+        "subquests": [
+          {
+            "name": "Variables and Expressions"
+          },
+          {
+            "name": "Linear Equations and Inequalities"
+          },
+          {
+            "name": "Algebraic Manipulation"
+          }
+        ]
+      },
+      {
+        "name": "Elementary Functions",
+        "subquests": [
+          {
+            "name": "Linear Functions"
+          },
+          {
+            "name": "Quadratic Functions"
+          },
+          {
+            "name": "Polynomial Functions"
+          }
+        ]
+      }
+    ]
+  }
+  
