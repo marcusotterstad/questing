@@ -1,33 +1,101 @@
 {
-    "quests": [
-      {
-        "name": "Introduction to Algebra",
-        "subquests": [
-          {
-            "name": "Variables and Expressions"
-          },
-          {
-            "name": "Linear Equations and Inequalities"
-          },
-          {
-            "name": "Algebraic Manipulation"
-          }
-        ]
-      },
-      {
-        "name": "Elementary Functions",
-        "subquests": [
-          {
-            "name": "Linear Functions"
-          },
-          {
-            "name": "Quadratic Functions"
-          },
-          {
-            "name": "Polynomial Functions"
-          }
-        ]
-      }
-    ]
-  }
-  
+  "quests": [
+    {
+      "name": "Calculus Course",
+      "subquests": [
+        {
+          "name": "Basic Algebra"
+        },
+        {
+          "name": "Elementary Functions",
+          "subquests": [
+            {
+              "name": "Linear Functions"
+            },
+            {
+              "name": "Quadratic Functions"
+            },
+            {
+              "name": "Polynomials"
+            },
+            {
+              "name": "Trigonometric Functions"
+            },
+            {
+              "name": "Exponential Functions"
+            },
+            {
+              "name": "Logarithmic Functions"
+            },
+            {
+              "name": "Inverse Functions"
+            },
+            {
+              "name": "Parametrical Curves"
+            }
+          ]
+        },
+        {
+          "name": "Functions of One Variable",
+          "subquests": [
+            {
+              "name": "Limits and Continuity"
+            },
+            {
+              "name": "Differentiation and Derivative"
+            },
+            {
+              "name": "Applications of the Derivative"
+            },
+            {
+              "name": "Analysis of Functions and Graphs"
+            },
+            {
+              "name": "Linearisation"
+            },
+            {
+              "name": "Optimisation"
+            }
+          ]
+        },
+        {
+          "name": "The Riemann Integral and Basic Integration Technique"
+        },
+        {
+          "name": "Taylor Polynomials and Polynomial Approximations"
+        },
+        {
+          "name": "Vectors in the Plane and the Space"
+        },
+        {
+          "name": "Numerical Algorithms",
+          "subquests": [
+            {
+              "name": "Finding Roots"
+            },
+            {
+              "name": "Numerical Integration"
+            },
+            {
+              "name": "Solution of Simple Differential Equations"
+            }
+          ]
+        },
+        {
+          "name": "Learning Outcome",
+          "subquests": [
+            {
+              "name": "Acquire the Basic Ideas and Theorems in the Theory"
+            },
+            {
+              "name": "Master the Standard Methods for Analysing and Operating with Functions with One Variable"
+            },
+            {
+              "name": "Use Knowledge and Skills to Solve Simple Applied Problems"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

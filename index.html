@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            #progressBar {
+                width: 100%;
+                background-color: #f3f3f3;
+                border-radius: 10px;
+            }
+    
+            #progressBar div {
+                height: 20px;
+                background-color: #4CAF50;
+                border-radius: 10px;
+                width: 0;
+            }
+        </style>
+    </head>
+
+<body>
+    <script>
+        class QuestNode {
+    constructor(name, parent = null) {
+        this.key = name;
+        this.parent = parent;
+        this.subquests = [];
+    }
+
+    setSubquest(subquest) {
+        this.subquests.push(subquest);
+    }
+}
+
+
+class QuestTree {
+    constructor(name = null) {
+        this.root = name ? new QuestNode(name) : null;
+    }
+
+    find(name, node = this.root) {
+        if (node === null) {
+            return null;
+        }
+        if (node.key === name) {
+            return node;
+        }
+        for (let child of node.subquests) {
+            let foundNode = this.find(name, child);
+            if (foundNode) {
+                return foundNode;
+            }
+        }
+        return null;
+    }
+
+    append(parentName, childName) {
+        let parentNode = parentName ? this.find(parentName) : null;
+        if (parentNode || parentName === null) {
+            let child = new QuestNode(childName, parentNode ? parentNode.key : null);
+            (parentNode || this.root).subquests.push(child);
+        } else {
+            console.error("Parent quest not found.");
+        }
+    }
+
+    // This function converts the QuestTree into a format that GoJS can understand.
+    toGoJsNodes(node = this.root, nodes = []) {
+        if (node !== null) {
+            let goJsNode = { key: node.key };
+            if (node.parent) {
+                goJsNode.parent = node.parent;
+            }
+            nodes.push(goJsNode);
+            for (let child of node.subquests) {
+                this.toGoJsNodes(child, nodes);
+            }
+        }
+        return nodes;
+    }
+}
+
+function buildQuestTreeFromJSON(jsonData, parentNodeName = null, questTreeObj = new QuestTree()) {
+    // Parse JSON data
+    let quests = jsonData.quests;
+
+    // Create quest nodes and append them to the quest_tree
+    for (let questData of quests) {
+        let questName = questData.name;
+
+        if (!questTreeObj.root) {
+            questTreeObj.root = new QuestNode(questName);
+        } else {
+            questTreeObj.append(parentNodeName, questName);
+        }
+
+        let subquestsData = questData.subquests || [];
+        for (let subquestData of subquestsData) {
+            // Recursive call for subquests
+            buildQuestTreeFromJSON({ "quests": [subquestData] }, questName, questTreeObj);
+        }
+    }
+
+    return questTreeObj;
+}
+
+// Example usage
+let jsonData = {
+    "quests": [
+        {
+            "name": "Calculus Course",
+            "subquests": [
+                {
+                    "name": "Basic Algebra"
+                },
+                {
+                    "name": "Elementary Functions",
+                    "subquests": [
+                        {
+                            "name": "Linear Functions"
+                        },
+                        {
+                            "name": "Quadratic Functions"
+                        },
+                        {
+                            "name": "Polynomials"
+                        },
+                        {
+                            "name": "Trigonometric Functions"
+                        },
+                        {
+                            "name": "Exponential Functions"
+                        },
+                        {
+                            "name": "Logarithmic Functions"
+                        },
+                        {
+                            "name": "Inverse Functions"
+                        },
+                        {
+                            "name": "Parametrical Curves"
+                        }
+                    ]
+                },
+                {
+                    "name": "Functions of One Variable",
+                    "subquests": [
+                        {
+                            "name": "Limits and Continuity"
+                        },
+                        {
+                            "name": "Differentiation and Derivative"
+                        },
+                        {
+                            "name": "Applications of the Derivative"
+                        },
+                        {
+                            "name": "Analysis of Functions and Graphs"
+                        },
+                        {
+                            "name": "Linearisation"
+                        },
+                        {
+                            "name": "Optimisation"
+                        }
+                    ]
+                },
+                {
+                    "name": "The Riemann Integral and Basic Integration Technique"
+                },
+                {
+                    "name": "Taylor Polynomials and Polynomial Approximations"
+                },
+                {
+                    "name": "Vectors in the Plane and the Space"
+                },
+                {
+                    "name": "Numerical Algorithms",
+                    "subquests": [
+                        {
+                            "name": "Finding Roots"
+                        },
+                        {
+                            "name": "Numerical Integration"
+                        },
+                        {
+                            "name": "Solution of Simple Differential Equations"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+let questTreeObj = buildQuestTreeFromJSON(jsonData);
+let goJsNodes = questTreeObj.toGoJsNodes();
+
+alert(JSON.stringify(goJsNodes, null, 2));
+
+function init() {
+    const $ = go.GraphObject.make;  // for conciseness in defining templates in this function
+
+    myDiagram =
+        $(go.Diagram, "myDiagramDiv",
+            {
+                initialContentAlignment: go.Spot.Center,
+                initialAutoScale: go.Diagram.Uniform,
+                layout: $(DoubleTreeLayout,
+                    {
+                        //vertical: true,  // default directions are horizontal
+                        // choose whether this subtree is growing towards the right or towards the left:
+                        directionFunction: n => n.data && n.data.dir !== "left"
+                        // controlling the parameters of each TreeLayout:
+                        //bottomRightOptions: { nodeSpacing: 0, layerSpacing: 20 },
+                        //topLeftOptions: { alignment: go.TreeLayout.AlignmentStart },
+                    })
+            });
+
+    // define all of the gradient brushes
+    var graygrad = $(go.Brush, "Linear", { 0: "#F5F5F5", 1: "#F1F1F1" });
+    var bluegrad = $(go.Brush, "Linear", { 0: "#CDDAF0", 1: "#91ADDD" });
+    var yellowgrad = $(go.Brush, "Linear", { 0: "#FEC901", 1: "#FEA200" });
+    var lavgrad = $(go.Brush, "Linear", { 0: "#EF9EFA", 1: "#A570AD" });
+
+    myDiagram.nodeTemplate =
+        $(go.Node, "Auto",
+            { isShadowed: true },
+            // define the node's outer shape
+            $(go.Shape, "RoundedRectangle",
+                { fill: graygrad, stroke: "#D8D8D8" },  // default fill is gray
+                new go.Binding("fill", "color")),
+            // define the node's text
+            $(go.TextBlock,
+                { margin: 5, font: "bold 11px Helvetica, bold Arial, sans-serif" },
+                new go.Binding("text", "key"))
+        );
+
+    myDiagram.linkTemplate =
+        $(go.Link,  // the whole link panel
+            { selectable: false },
+            $(go.Shape));  // the link shape
+
+    // create the model for the double tree; could be eiher TreeModel or GraphLinksModel
+    myDiagram.model = new go.TreeModel(goJsNodes);
+}
+window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+    <script src="https://unpkg.com/gojs@2.3.7/release/go.js"></script>
+    <script src="https://unpkg.com/gojs/extensions/DoubleTreeLayout.js"></script>
+    <div id="progressBar">
+        <div></div>
+    </div>
+
+    <div id="allSampleContent" class="p-4 w-full">
+        <div id="allSampleContent" class="p-4 w-full">
+    
+        <!--GoJS diagram html-->
+        <div id="myDiagramDiv"
+            style="background-color: white; border: 1px solid black; width: 100%; height: 500px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
+            <canvas tabindex="0" width="1582" height="748"
+                style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; letter-spacing: normal; word-spacing: normal; width: 1055px; height: 499px;">This
+                text is displayed if your browser does not support the Canvas HTML element.</canvas>
+            <div style="position: absolute; overflow: auto; width: 1055px; height: 499px; z-index: 1;">
+                <div style="position: absolute; width: 1px; height: 1px;"></div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>
